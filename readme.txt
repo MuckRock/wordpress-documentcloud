@@ -1,8 +1,8 @@
 === DocumentCloud ===
-Contributors: chrisamico, reefdog
+Contributors: chrisamico, reefdog, freedmand
 Tags: documentcloud, documents, journalism, reporting, research
 Requires at least: 3.5
-Tested up to: 4.7
+Tested up to: 5.5
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -78,6 +78,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 **Upgrading from Navis DocumentCloud:** If you're currently using the Navis DocumentCloud plugin (from which this plugin was built), you'll want to deactivate or delete it before installing this plugin.
 
 == Changelog ==
+
+= 0.5.0 =
+* Add support for the DocumentCloud beta
 
 = 0.4.3 =
 * Separate the oEmbed config options (provided as params to the endpoint) from the embed config options (encoded as params on the `url`) (#48)

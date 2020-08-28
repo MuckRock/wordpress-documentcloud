@@ -3,13 +3,14 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.4.4-dev
- * Authors: Chris Amico, Justin Reese
+ * Version: 0.5.0
+ * Authors: Chris Amico, Justin Reese, Dylan Freedman
  * License: GPLv2
 ***/
 /*
 	Copyright 2011 National Public Radio, Inc.
 	Copyright 2015 DocumentCloud, Investigative Reporters & Editors
+	Copyright 2020 MuckRock Foundation, Inc.
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -28,11 +29,17 @@
 class WP_DocumentCloud {
 
 	// Plugin constants
-	const CACHING_ENABLED		   = true,
-		  DEFAULT_EMBED_FULL_WIDTH = 940,
-		  OEMBED_RESOURCE_DOMAIN   = 'www.documentcloud.org',
-		  OEMBED_PROVIDER		   = 'https://www.documentcloud.org/api/oembed.{format}',
-		  DOCUMENT_PATTERN		   = '^(?P<protocol>https?):\/\/www\.documentcloud\.org\/documents\/(?P<document_slug>[0-9]+-[\p{L}\p{N}%-]+)';
+	const CACHING_ENABLED           = true,
+		  DEFAULT_EMBED_FULL_WIDTH    = 940,
+		  OEMBED_RESOURCE_DOMAIN      = 'www.documentcloud.org',
+		  OEMBED_PROVIDER             = 'https://www.documentcloud.org/api/oembed.{format}',
+			DOCUMENT_PATTERN            = '^(?P<protocol>https?):\/\/(?P<dc_host>.*documentcloud\.org)\/documents\/(?P<document_slug>[0-9]+-[\p{L}\p{N}%-]+)',
+			CONTAINER_TEMPLATE_START    = "<div class=\"embed-documentcloud\" style=\"text-align: center;\">",
+			CONTAINER_TEMPLATE_END      = "</div>",
+      BETA_ID_CUTOFF              = 20000000,
+			BETA_OEMBED_RESOURCE_DOMAIN = 'beta.documentcloud.org',
+			BETA_OEMBED_DOMAIN_MATCH    = '#https?://(www\.)?(beta|embed).documentcloud.org/.*#i',
+      BETA_OEMBED_PROVIDER        = 'https://api.beta.documentcloud.org/api/oembed';
 	/**
 	 * Constructor.
 	 */
@@ -108,7 +115,14 @@ class WP_DocumentCloud {
 		$oembed_provider = apply_filters( 'documentcloud_oembed_provider', WP_DocumentCloud::OEMBED_PROVIDER );
 
 		wp_oembed_add_provider( 'http://'  . $oembed_resource_domain . '/documents/*', $oembed_provider );
-		wp_oembed_add_provider( 'https://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
+    wp_oembed_add_provider( 'https://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
+
+    // Add oembed provider for the DocumentCloud beta
+    wp_oembed_add_provider(
+      WP_DocumentCloud::BETA_OEMBED_DOMAIN_MATCH,
+      WP_DocumentCloud::BETA_OEMBED_PROVIDER,
+      true
+  );
 	}
 
 	/**
@@ -233,7 +247,15 @@ class WP_DocumentCloud {
 			if ( empty( $atts['id'] ) ) {
 				return '';
 			} else {
-				$url = $filtered_atts['url'] = 'https://' . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
+        // Determine which URL on the basis of the DocumentCloud ID
+        if (intval($atts['id']) >= WP_DocumentCloud::BETA_ID_CUTOFF) {
+          // Populate beta URL
+          // TODO: use only one URL after the switch
+          $url = $filtered_atts['url'] = 'https://' . WP_DocumentCloud::BETA_OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
+        } else {
+          // Populate legacy URL
+          $url = $filtered_atts['url'] = 'https://' . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
+        }
 			}
 		}
 
@@ -270,9 +292,9 @@ class WP_DocumentCloud {
 			// Thanks to http://bit.ly/1HykA0U for this pattern.
 			global $wp_embed;
 			$url = $filtered_atts['url'] = $this->clean_dc_url( $atts['url'] );
-			return $wp_embed->shortcode( $filtered_atts, $url );
+			return WP_DocumentCloud::CONTAINER_TEMPLATE_START . $wp_embed->shortcode( $filtered_atts, $url ) . WP_DocumentCloud::CONTAINER_TEMPLATE_END;
 		} else {
-			return wp_oembed_get( $atts['url'], $filtered_atts );
+			return WP_DocumentCloud::CONTAINER_TEMPLATE_START . wp_oembed_get( $atts['url'], $filtered_atts ) . WP_DocumentCloud::CONTAINER_TEMPLATE_END;
 		}
 
 	}
@@ -316,7 +338,7 @@ class WP_DocumentCloud {
 	function clean_dc_url( $url ) {
 		$elements = $this->parse_dc_url( $url );
 		if ( isset( $elements['document_slug'] ) ) {
-			$url = "{$elements['protocol']}://" . WP_DocumentCloud::OEMBED_RESOURCE_DOMAIN . "/documents/{$elements['document_slug']}";
+			$url = "{$elements['protocol']}://{$elements['dc_host']}/documents/{$elements['document_slug']}";
 			if ( isset( $elements['page_number'] ) ) {
 				$url .= "/pages/{$elements['page_number']}";
 			} else if ( isset( $elements['note_id'] ) ) {
@@ -340,11 +362,12 @@ class WP_DocumentCloud {
 	 * Render the DocumentCloud options page.
 	 */
 	function render_options_page() {
+    // TODO: remove the responsive warning after the switch
 		?>
 		<h2><?php esc_html_e( 'DocumentCloud Options', 'documentcloud' ) ?></h2>
 		<form action="options.php" method="post">
 
-			<p><?php echo wp_kses_post( __( 'Any widths set here will only take effect if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ) ?></p>
+			<p><?php echo wp_kses_post( __( 'Any widths set here will only take effect on non-beta DocumentCloud embeds if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ) ?></p>
 
 			<?php settings_fields( 'documentcloud' ); ?>
 			<?php do_settings_sections( 'documentcloud' ); ?>
