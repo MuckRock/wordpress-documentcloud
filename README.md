@@ -88,19 +88,9 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Development
 
-Docker is used to host development environments for Wordpress and React.
+Docker is used to spin up a development and testing WordPress environment.
 
 ### Install
-
-#### React Dev Environment
-
-```sh
-cd src/react-embed
-npm install
-npm run dev
-```
-
-#### Wordpress Dev Environment
 
 ```sh
 # Start services
@@ -111,6 +101,7 @@ docker-compose exec wordpress chown -R www-data:www-data /var/www/html
 
 1. Go to `localhost:8000`
 2. Create an account. Save the username and password, then log in.
+3. Go to the Plugins section, then activate the "Classic Editor" and "DocumentCloud" plugins.
 
 ## Changelog
 
