@@ -47,6 +47,7 @@ To embed a note, use any note-specific URL. Notes ignore `width/height` and alwa
 
 Here's the full list of embed options you can pass via shortcode attributes; some are specific to the type of resource you're embedding.
 
+
 ### All resources:
 
 - `url` (**required**, string): Full URL of the DocumentCloud resource.
@@ -84,6 +85,23 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 1. Delete the appropriate `_oembed_*` rows from your `postmeta` table.
 2. Modify the shortcode attributes for the embed, since this is recognized as a new embed by WordPress.
+
+## Development
+
+Docker is used to spin up a development and testing WordPress environment.
+
+### Install
+
+```sh
+# Start services
+docker compose up
+# Fix permissions
+docker-compose exec wordpress chown -R www-data:www-data /var/www/html
+```
+
+1. Go to `localhost:8000`
+2. Create an account. Save the username and password, then log in.
+3. Go to the Plugins section, then activate the "Classic Editor" and "DocumentCloud" plugins.
 
 ## Changelog
 
@@ -143,3 +161,4 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 ## License and History
 
 The DocumentCloud WordPress plugin is [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html). Initial development of this plugin by Chris Amico (@eyeseast) supported by [NPR](http://www.npr.org) as part of the [StateImpact](http://stateimpact.npr.org) project. Development continued by Justin Reese (@reefdog) at [DocumentCloud](https://www.documentcloud.org/).
+
