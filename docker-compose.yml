@@ -13,7 +13,7 @@ services:
       WORDPRESS_TABLE_PREFIX: wp_
     volumes:
       - ./src/wordpress:/var/www/html
-      - ./:/var/www/html/wp-content/plugins/documentcloud
+      - ./src/documentcloud:/var/www/html/wp-content/plugins/documentcloud
 
     depends_on:
       - db
@@ -24,7 +24,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: Testing
     volumes:
       - .:/var/www/html
     depends_on:
@@ -36,7 +35,13 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: wordpress_test
-    command: sh -c "composer install && tail -f /dev/null"
+    command: >
+      sh -c "
+        composer install &&
+        alias phpunit='./src/documentcloud/vendor/bin/phpunit' &&
+        echo 'alias phpunit=\"./src/documentcloud/vendor/bin/phpunit\"' >> ~/.bashrc &&
+        tail -f /dev/null
+      "
   
   phpmyadmin:
     depends_on:

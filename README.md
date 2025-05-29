@@ -6,7 +6,7 @@ The DocumentCloud WordPress plugin lets you embed [DocumentCloud](https://www.do
 
 ## Installation
 
-1. Upload the contents of the plugin to `wp-content/plugins/documentcloud`
+1. Upload the contents of the `src/documentcloud` plugin to `wp-content/plugins/documentcloud`
 2. Activate the plugin through the "Plugins" menu
 3. In your posts, embed documents, pages, or notes using the DocumentCloud button or the `[documentcloud]` shortcode
 4. Optional: Set a default width/height for all DocumentCloud embeds (which can be overridden on a per-embed basis with the `height/width` attributes) at Settings > DocumentCloud. (This default width will only be used if you set `responsive="false"` on an embed.)
@@ -106,6 +106,8 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Development
 
+Plugin files are located in `src/documentcloud`
+
 Docker is used to spin up a development and testing WordPress environment.
 
 Unit tests are setup using PHPUnit and Jest, please refer to [Testing Setup ](./TESTING.md) for the setup steps
@@ -115,13 +117,29 @@ Unit tests are setup using PHPUnit and Jest, please refer to [Testing Setup ](./
 ```sh
 # Start services
 docker compose up
+
 # Fix permissions
-docker-compose exec wordpress chown -R www-data:www-data /var/www/html
+docker compose exec wordpress chown -R www-data:www-data /var/www/html
 ```
 
-1. Go to `localhost:8000`
+1. Go to [`localhost:8000`](http://localhost:8000)
 2. Create an account. Save the username and password, then log in.
 3. Go to the Plugins section, then activate the "DocumentCloud" plugin.
+
+### Test
+
+```sh
+# 1. Open a shell into the testing service
+docker compose exec -it testing bash
+
+# 2. Install the WordPress Test Suite anytime you rebuild the container
+./bin/install-wp-tests.sh test root password db latest
+
+# 3. Now the container is ready to run PHPUnit Tests
+phpunit
+```
+
+Advanced instructions in `TESTING.md`
 
 ## Changelog
 
