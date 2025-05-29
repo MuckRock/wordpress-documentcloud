@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   test-wp:
     name: Test WordPress Plugin
-    runs-on: high-performance
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
