@@ -87,12 +87,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install npm dependencies
-        working-directory: ./blocks # Run npm commands from the blocks folder
+        working-directory: ./src/documentcloud/blocks # Run npm commands from the blocks folder
         run: |
           npm install --force
 
       - name: Run npm tests
-        working-directory: ./blocks # Run npm tests from the blocks folder
+        working-directory: ./src/documentcloud/blocks # Run npm tests from the blocks folder
         run: |
           npm run test
 
