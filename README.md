@@ -69,6 +69,24 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `zoom` (boolean): Hide or show zoom slider.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
+Or as a Gutenberg Block :
+
+    DocumentCloud
+Icon - ![DocumentCloud Block Icon](assets/DocumentCloud-Block-Icon.svg)
+
+Here's the list of settings that can be used for the block:
+- `WIDTH` (number): Sets the width of the document (optional)
+- `HEIGHT` (number): Sets the height of the document (optional)
+- `STYLE` (string): Adds additional style to the embedded document  (optional)
+
+The following options can only be used for Documents:
+- `Show Title` (toggle): Determines whether to show the title of the embedded document
+- `Show FullScreen Button` (toggle): Determines whether to show a full screen icon on the document
+- `Only Show Organization` (toggle): Determines whether to only show the organization name that published the document.
+- `Show PDF Download Link` (toggle): Determines whether to show the download as pdf icon for documents.
+
+**Note** - The default width and height from the Settings does not work for the Gutenberg Block.
+
 You can read more about publishing and embedding DocumentCloud resources on https://www.documentcloud.org/help/publishing.
 
 ## How the oEmbed endpoint is discovered
@@ -90,6 +108,8 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 Docker is used to spin up a development and testing WordPress environment.
 
+Unit tests are setup using PHPUnit and Jest, please refer to [Testing Setup ](./TESTING.md) for the setup steps
+
 ### Install
 
 ```sh
@@ -101,9 +121,18 @@ docker-compose exec wordpress chown -R www-data:www-data /var/www/html
 
 1. Go to `localhost:8000`
 2. Create an account. Save the username and password, then log in.
-3. Go to the Plugins section, then activate the "Classic Editor" and "DocumentCloud" plugins.
+3. Go to the Plugins section, then activate the "DocumentCloud" plugin.
 
 ## Changelog
+
+### 0.6.0
+* Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.
+* Update the shortcode to support the following attributes
+  * `onlyshoworg` - When set to 1 it only displays the organization name
+  * `pdf` - When set to 1 it shows a pdf download icon
+  * `showfullscreen` - When set to 1 it displays a full screen icon.
+  * `title` - When set to 1 it displays the title of the document.
+* Allow setting the query parameter attributes when directly embedding the url in Embed block.
 
 ### 0.5.1
 

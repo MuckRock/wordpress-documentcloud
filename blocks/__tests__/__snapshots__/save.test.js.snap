@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentCloud Block Save Component matches the snapshot 1`] = `
+<div>
+  <div
+    class="wp-block-documentcloud"
+  >
+    <div
+      class="documentcloud-embed"
+    >
+      <iframe
+        src="https://embed.documentcloud.org/documents/23060035-notes"
+      />
+    </div>
+  </div>
+</div>
+`;

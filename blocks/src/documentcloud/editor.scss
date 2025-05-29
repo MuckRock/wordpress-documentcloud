@@ -1,0 +1,101 @@
+/**
+ * DocumentCloud Block Editor Styles
+ */
+
+/**
+ * DocumentCloud Block Editor Styles
+ */
+
+.wp-block-documentcloud-documentcloud {
+
+	.documentcloud-oembed {
+		width: auto;
+		height: auto;
+	}
+
+	.documentcloud-error-container {
+
+		.documentcloud-preview-footer {
+			margin-top: 10px;
+		}
+	}
+
+	.documentcloud-input-wrapper {
+		width: inherit;
+	}
+
+	.documentcloud-input-row {
+		display: flex;
+		gap: 10px; // Adds spacing between the input field and the button
+
+		button {
+			margin-top: 0; // Ensures the button aligns vertically with the input field
+			height: 32px; // Adjusts the button height to match the input field
+		}
+
+		input {
+			width: 311px;
+		}
+
+	}
+
+	// Responsive styles.
+	@media (max-width: 500px) {
+
+		.documentcloud-input-row {
+			flex-wrap: wrap;
+			width: 100%;
+
+			// Ensure the wrapper divs take up the full width
+			.components-base-control {
+				width: 100%;
+			}
+
+			// Ensure the input field inside TextControl takes up the full width
+			.components-base-control__field {
+				width: 100%;
+			}
+
+			input {
+				width: 100%;
+				position: relative;
+			}
+
+			button {
+				width: 100%;
+			}
+		}
+	}
+
+	// Styles for the iframe overlay.
+	.documentcloud-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: transparent;
+		z-index: 10;
+		cursor: pointer;
+	}
+
+	.documentcloud-preview {
+		position: relative;
+	}
+
+}
+
+// Added style to fix the outline overflow issue when the block is selected.
+.block-editor-block-list__layout .wp-block-documentcloud-documentcloud.block-editor-block-list__block:not([contenteditable="true"]):focus::after{
+	right: -2px;
+}
+
+
+// Inspector Controls Styles
+
+.components-panel__row {
+
+	.components-base-control {
+		width: 100%;
+	}
+}

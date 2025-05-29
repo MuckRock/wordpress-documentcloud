@@ -1,0 +1,59 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "documentcloud/documentcloud",
+	"version": "0.1.0",
+	"title": "DocumentCloud",
+	"category": "embed",
+	"description": "Allows embedding the DocumentCloud documents, pages and notes on your page.",
+	"example": {},
+	"attributes": {
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+		"documentId" : {
+			"type": "string",
+			"default": ""
+		},
+		"useDocumentId" : {
+			"type": "boolean",
+			"default": false
+		},
+		"height": {
+			"type": "string",
+			"default": ""
+		},
+		"width": {
+			"type": "string",
+			"default": ""
+		},
+		"title": {
+			"type": "boolean",
+			"default": true
+		},
+		"fullscreen": {
+			"type": "boolean",
+			"default": true
+		},
+		"onlyshoworg": {
+			"type": "boolean",
+			"default": false
+		},
+		"pdf": {
+			"type": "boolean",
+			"default": null
+		},
+		"embeddedHtml": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": true
+	},
+	"textdomain": "documentcloud",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css"
+}
