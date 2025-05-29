@@ -4,7 +4,7 @@
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
  * Version: 0.6.0
- * Authors: Chris Amico, Justin Reese, Dylan Freedman
+ * Authors: Allan Lasser, Chris Amico, Justin Reese, Dylan Freedman
  * Text Domain: documentcloud
  * License: GPLv2
  * Requires at least: 5.0
