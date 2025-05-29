@@ -128,6 +128,10 @@ docker compose exec wordpress chown -R www-data:www-data /var/www/html
 
 ### Test
 
+Tests can be run in a separate container called `testing`.
+
+To test the PHP plugin, use `phpunit` command inside the testing container's `bash` shell after setting it up:
+
 ```sh
 # 1. Open a shell into the testing service
 docker compose exec -it testing bash
@@ -139,7 +143,23 @@ docker compose exec -it testing bash
 phpunit
 ```
 
-Advanced instructions in `TESTING.md`
+To test the JS Gutenberg block, use `npm test` command inside the testing container's `bash` shell after setting it up:
+
+```sh
+# 1. Open a shell into the testing service
+docker compose exec -it testing bash
+
+# 2. Navigate to the blocks directory
+cd src/documentcloud/blocks
+
+# 3. Install Node modules
+npm i
+
+# 4. Now the container is ready to run Jest tests
+npm test
+```
+
+Find more advanced instructions in `TESTING.md`
 
 ## Changelog
 
