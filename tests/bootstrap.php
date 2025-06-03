@@ -5,7 +5,7 @@
  * @package Documentcloud
  */
 
- require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
@@ -31,7 +31,7 @@ require_once "{$_tests_dir}/includes/functions.php";
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/documentcloud.php';
+	require dirname( dirname( __FILE__ ) ) . '/src/documentcloud/documentcloud.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

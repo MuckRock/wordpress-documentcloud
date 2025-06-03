@@ -38,8 +38,8 @@ services:
     command: >
       sh -c "
         composer install &&
-        alias phpunit='./src/documentcloud/vendor/bin/phpunit' &&
-        echo 'alias phpunit=\"./src/documentcloud/vendor/bin/phpunit\"' >> ~/.bashrc &&
+        alias phpunit='./vendor/bin/phpunit' &&
+        echo 'alias phpunit=\"./vendor/bin/phpunit\"' >> ~/.bashrc &&
         tail -f /dev/null
       "
   
