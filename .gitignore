@@ -3,6 +3,7 @@
 
 # WordPress Dev Environment
 src/wordpress
+dist
 
 # Composer
 **/vendor
