@@ -13,11 +13,35 @@ services:
       WORDPRESS_TABLE_PREFIX: wp_
     volumes:
       - ./src/wordpress:/var/www/html
-      - ./documentcloud.php:/var/www/html/wp-content/plugins/documentcloud/documentcloud.php
+      - ./src/documentcloud:/var/www/html/wp-content/plugins/documentcloud
+
     depends_on:
       - db
     networks:
       - wp_net
+
+  testing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - wp_net
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: wordpress_test
+    command: >
+      sh -c "
+        composer install &&
+        alias phpunit='./vendor/bin/phpunit' &&
+        echo 'alias phpunit=\"./vendor/bin/phpunit\"' >> ~/.bashrc &&
+        tail -f /dev/null
+      "
   
   phpmyadmin:
     depends_on:
@@ -37,6 +61,8 @@ services:
   db:
     image: mariadb:latest
     container_name: db
+    ports:
+      - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
     environment:

@@ -1,0 +1,4 @@
+body.settings_page_documentcloud .wrap .notice.notice-success,
+body.settings_page_documentcloud #setting-error-settings_updated {
+	margin: 5px 38px 15px 0;
+}

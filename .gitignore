@@ -3,3 +3,9 @@
 
 # WordPress Dev Environment
 src/wordpress
+
+# Composer
+**/vendor
+
+# Testing
+.phpunit.cache
