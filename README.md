@@ -161,6 +161,14 @@ npm test
 
 Find more advanced instructions in `TESTING.md`
 
+### Package for release
+
+To create a new release:
+
+1. Update the version number in `src/documentcloud/documentcloud.php` and `src/documentcloud/readme.txt`
+2. Update changelog for new version in `README.md` and `src/documentcloud/readme.txt`
+3. Run `package-plugin.sh` to generate ZIP file for distribution
+
 ## Changelog
 
 ### 0.6.0
