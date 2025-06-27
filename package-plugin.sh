@@ -46,7 +46,7 @@ rsync -av \
     --exclude='.*' \
     --exclude='*/.*' \
     --exclude='node_modules/' \
-    --exclude='blocks/' \
+    --exclude='/blocks/' \
     "$SOURCE_DIR/" "$DIST_DIR/$PLUGIN_NAME/"
 
 # Step 2.1: Clean up any remaining hidden files that might have been copied
