@@ -499,11 +499,17 @@ export default function Edit( { attributes, setAttributes } ) {
 							<SelectControl
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
-								label={ __( 'Default Viewer Mode', 'documentcloud' ) }
+								label={ __(
+									'Default Viewer Mode',
+									'documentcloud'
+								) }
 								value={ mode }
 								options={ [
 									{
-										label: __( 'Document', 'documentcloud' ),
+										label: __(
+											'Document',
+											'documentcloud'
+										),
 										value: 'document',
 									},
 									{
@@ -609,7 +615,6 @@ export default function Edit( { attributes, setAttributes } ) {
 								) }
 							/>
 						</PanelRow>
-
 					</PanelBody>
 				) }
 			</InspectorControls>

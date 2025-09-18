@@ -1,19 +1,17 @@
 {
-	"extends": [
-	"plugin:@wordpress/eslint-plugin/recommended"
-],
+	"extends": [ "plugin:@wordpress/eslint-plugin/recommended" ],
 	"parserOptions": {
-	"ecmaVersion": 2021,
+		"ecmaVersion": 2021,
 		"sourceType": "module",
 		"ecmaFeatures": {
-		"jsx": true
-	}
-},
+			"jsx": true
+		}
+	},
 	"env": {
-	"browser": true,
+		"browser": true,
 		"es6": true
-},
+	},
 	"rules": {
-	// Any custom rules you want to add or override
-}
+		// Any custom rules you want to add or override
+	}
 }

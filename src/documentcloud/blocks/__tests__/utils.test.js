@@ -101,7 +101,14 @@ describe( 'DocumentCloud Utils', () => {
 
 		it( 'should exclude invalid mode parameter from embed URL', () => {
 			// Validates that invalid mode values are not included in the embed URL
-			const invalidModes = [ 'invalid', 'foo', 'bar', '', null, undefined ];
+			const invalidModes = [
+				'invalid',
+				'foo',
+				'bar',
+				'',
+				null,
+				undefined,
+			];
 
 			invalidModes.forEach( ( mode ) => {
 				const params = {
@@ -201,7 +208,14 @@ describe( 'DocumentCloud Utils', () => {
 
 		it( 'should return null for invalid mode values', () => {
 			// Tests that invalid mode values return null
-			const invalidModes = [ 'invalid', 'foo', 'bar', '', null, undefined ];
+			const invalidModes = [
+				'invalid',
+				'foo',
+				'bar',
+				'',
+				null,
+				undefined,
+			];
 			invalidModes.forEach( ( mode ) => {
 				expect( validateMode( mode ) ).toBeNull();
 			} );

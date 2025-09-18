@@ -12,11 +12,11 @@
 			"type": "string",
 			"default": ""
 		},
-		"documentId" : {
+		"documentId": {
 			"type": "string",
 			"default": ""
 		},
-		"useDocumentId" : {
+		"useDocumentId": {
 			"type": "boolean",
 			"default": false
 		},
