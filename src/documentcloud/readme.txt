@@ -3,7 +3,7 @@ Contributors: chrisamico, reefdog, freedmand
 Tags: documentcloud, documents, journalism, reporting, research
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 0.6.0
+Stable tag: 0.7.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,8 @@ You can read more about publishing and embedding DocumentCloud resources on http
 **Upgrading from Navis DocumentCloud:** If you're currently using the Navis DocumentCloud plugin (from which this plugin was built), you'll want to deactivate or delete it before installing this plugin.
 
 == Changelog ==
+
+= 0.7.0 =
 
 = 0.6.0 =
 * Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.

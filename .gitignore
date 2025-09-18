@@ -10,3 +10,6 @@ dist
 
 # Testing
 .phpunit.cache
+
+# Claude Code
+CLAUDE.md

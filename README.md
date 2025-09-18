@@ -171,6 +171,8 @@ To create a new release:
 
 ## Changelog
 
+### 0.7.0
+
 ### 0.6.0
 * Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.
 * Update the shortcode to support the following attributes
