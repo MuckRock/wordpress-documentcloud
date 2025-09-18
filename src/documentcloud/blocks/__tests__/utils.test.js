@@ -59,10 +59,10 @@ describe( 'DocumentCloud Utils', () => {
 				onlyshoworg: false,
 				pdf: true,
 				style: 'custom-style',
-				responsive: true,
+				responsive: true, // Check that we ignore the responsive option
 			};
 			expect( getEmbedUrl( params ) ).toBe(
-				'https://www.documentcloud.org/documents/123?embed=1&title=1&fullscreen=0&onlyshoworg=0&pdf=1&style=custom-style&responsive=1'
+				'https://www.documentcloud.org/documents/123?embed=1&title=1&fullscreen=0&onlyshoworg=0&pdf=1&style=custom-style'
 			);
 		} );
 
@@ -76,10 +76,10 @@ describe( 'DocumentCloud Utils', () => {
 				onlyshoworg: true,
 				pdf: false,
 				style: 'border: 1px solid #000;',
-				responsive: false,
+				responsive: false, // Check that we ignore the responsive option
 			};
 			expect( getEmbedUrl( params ) ).toBe(
-				'https://embed.documentcloud.org/documents/24479621-24-03-13-epic-motion-to-enforce-injunction?embed=1&title=0&fullscreen=1&onlyshoworg=1&pdf=0&style=border%3A%201px%20solid%20%23000%3B&responsive=0'
+				'https://embed.documentcloud.org/documents/24479621-24-03-13-epic-motion-to-enforce-injunction?embed=1&title=0&fullscreen=1&onlyshoworg=1&pdf=0&style=border%3A%201px%20solid%20%23000%3B'
 			);
 		} );
 	} );

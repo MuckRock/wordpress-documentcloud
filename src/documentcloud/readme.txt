@@ -52,10 +52,8 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 
 **Documents only:**
 
-- `height` (integer): Height (in pixels) of the embed.
-- `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
-- `responsive` (boolean): Use responsive layout, which dynamically adjusts width to fill content area. Defaults `true`.
-- `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
+- `height` (integer): Maximum height (in pixels) of the embed.
+- `width` (integer): Maximum width (in pixels) of the embed.
 - `page` (integer): Page number to have the document scroll to by default.
 - `note` (integer): ID of the note that the document should highlight by default.
 - `notes` (boolean): Hide or show notes.
@@ -97,6 +95,9 @@ You can read more about publishing and embedding DocumentCloud resources on http
 == Changelog ==
 
 = 0.7.0 =
+* Removes the `responsive` URL parameter option.
+    All embeds are rendered responsively, so this option is now deprecated.
+    The height and width of the embed can still be controlled with their respective options.
 
 = 0.6.0 =
 * Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.

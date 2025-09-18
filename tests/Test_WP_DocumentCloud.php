@@ -153,7 +153,7 @@ class Test_WP_DocumentCloud extends TestCase {
 			'url'        => 'https://www.documentcloud.org/documents/24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930/',
 			'page'       => 2,
 			'zoom'       => 150,
-			'responsive' => 'true',
+			'responsive' => 'true', // check that we ignore the responsive attribute
 			'sidebar'    => 'false',
 			'width'      => 1000,
 			'height'     => 700,
@@ -165,10 +165,11 @@ class Test_WP_DocumentCloud extends TestCase {
 		$this->assertStringContainsString( 'embed.documentcloud.org/documents/24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930', $result );
 		$this->assertStringContainsString( 'page=2', $result );
 		$this->assertStringContainsString( 'zoom=150', $result );
-		$this->assertStringContainsString( 'responsive=true', $result );
 		$this->assertStringContainsString( 'sidebar=false', $result );
 		$this->assertStringContainsString( 'width="1000"', $result );
 		$this->assertStringContainsString( 'height="700"', $result );
+    // Assert the things we don't expect to be present
+    $this->assertStringNotContainsString( 'responsive=true', $result );
 	}
 
 	/**

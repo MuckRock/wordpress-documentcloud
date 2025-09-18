@@ -45,7 +45,6 @@ export function getDocumentCloudUrlType( url ) {
  * @param {boolean} params.onlyshoworg   - Whether to only show organization.
  * @param {boolean} params.pdf           - Whether to show PDF download link.
  * @param {string}  params.style         - Custom CSS style.
- * @param {boolean} params.responsive    - Should it be responsive.
  * @return {string} The generated embed URL.
  */
 export const getEmbedUrl = ( {
@@ -57,7 +56,6 @@ export const getEmbedUrl = ( {
 	onlyshoworg,
 	pdf,
 	style,
-	responsive = true,
 } ) => {
 	if ( ! ( useDocumentId ? documentId : url ) ) {
 		return '';
@@ -121,7 +119,6 @@ export const getEmbedUrl = ( {
 		onlyshoworg: onlyshoworg ? 1 : 0,
 		pdf: pdf ? 1 : 0,
 		style: style || '',
-		responsive: responsive ? 1 : 0,
 	};
 
 	const queryString = Object.entries( params )

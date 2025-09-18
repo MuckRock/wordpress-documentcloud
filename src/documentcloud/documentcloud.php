@@ -177,12 +177,10 @@ class WP_DocumentCloud {
 			'url'               => null,
 			'container'         => null,
 			'notes'             => null,
-			'responsive_offset' => null,
 			'page'              => null,
 			'note'              => null,
 			'zoom'              => null,
 			'search'            => null,
-			'responsive'        => null,
 			'sidebar'           => null,
 			'text'              => null,
 			'pdf'               => 0,
@@ -236,10 +234,6 @@ class WP_DocumentCloud {
 				$args['maxheight'] = $url_args['height'];
 			}
 
-			// If the width is set from url we should set the responsive to false just like how the shortcode works.
-			if ( isset( $url_args['width'] ) && ! array_key_exists( 'responsive', $url_args ) ) {
-				$args['responsive'] = 0;
-			}
 		}
 
 		$atts = wp_parse_args( $args, $default_atts );
@@ -317,15 +311,6 @@ class WP_DocumentCloud {
 		}
 		if ( isset( $atts['width'] ) ) {
 			$filtered_atts['maxwidth'] = $atts['width'];
-		}
-
-		// `responsive` defaults true, but our responsive layout
-		// ignores width declarations. If a user indicates a width and
-		// hasn't otherwise specifically indicated `responsive='true'`,
-		// it's safe to assume they expect us to respect the width, so
-		// we disable the responsive flag.
-		if ( ( isset( $atts['width'] ) || isset( $atts['maxwidth'] ) ) && ( ! array_key_exists( 'responsive', $atts ) || 'true' !== $atts['responsive'] ) ) {
-			$filtered_atts['responsive'] = 'false';
 		}
 
 		// If the format is set to wide, it blows away all other width
@@ -414,14 +399,10 @@ class WP_DocumentCloud {
 	 * Render the DocumentCloud options page.
 	 */
 	public function render_options_page() {
-		// TODO: remove the responsive warning after the switch.
 		?>
 		<h2><?php esc_html_e( 'DocumentCloud Options', 'documentcloud' ); ?></h2>
 		<p><b><?php esc_html_e( 'Note', 'documentcloud' ); ?></b> - <?php esc_html_e( 'These settings will only work for the ShortCode and Embed Block.', 'documentcloud' ); ?></p>
 		<form action="options.php" method="post">
-
-			<p><?php echo wp_kses_post( __( 'Any widths set here will only take effect on non-beta DocumentCloud embeds if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ); ?></p>
-
 			<?php settings_fields( 'documentcloud' ); ?>
 			<?php do_settings_sections( 'documentcloud' ); ?>
 
