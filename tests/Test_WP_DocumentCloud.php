@@ -233,4 +233,66 @@ class Test_WP_DocumentCloud extends TestCase {
 		$this->assertEquals( 'www.documentcloud.org', $result['dc_host'] );
 		$this->assertEquals( '24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930', $result['document_slug'] );
 	}
+
+	/**
+	 * Test the process_dc_shortcode method with mode parameter.
+	 *
+	 * Ensures valid mode values are included in the embed URL.
+	 */
+	public function test_process_dc_shortcode_with_valid_mode() {
+		$valid_modes = array( 'document', 'notes', 'text', 'grid' );
+
+		foreach ( $valid_modes as $mode ) {
+			$atts = array(
+				'url'  => 'https://www.documentcloud.org/documents/24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930',
+				'mode' => $mode,
+			);
+
+			$result = $this->dc->process_dc_shortcode( $atts );
+
+			// Assert that the result contains the mode parameter.
+			$this->assertStringContainsString( "mode={$mode}", $result, "Mode '{$mode}' should be included in embed URL" );
+		}
+	}
+
+	/**
+	 * Test the process_dc_shortcode method with invalid mode parameter.
+	 *
+	 * Ensures invalid mode values are not included in the embed URL.
+	 */
+	public function test_process_dc_shortcode_with_invalid_mode() {
+		$invalid_modes = array( 'invalid', 'foo', 'bar', '', null );
+
+		foreach ( $invalid_modes as $mode ) {
+			$atts = array(
+				'url'  => 'https://www.documentcloud.org/documents/24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930',
+				'mode' => $mode,
+			);
+
+			$result = $this->dc->process_dc_shortcode( $atts );
+
+			// Assert that the result does not contain an invalid mode parameter.
+			if ( ! empty( $mode ) ) {
+				$this->assertStringNotContainsString( "mode={$mode}", $result, "Invalid mode '{$mode}' should not be included in embed URL" );
+			}
+			// Also check that no mode parameter is present at all for invalid values.
+			$this->assertStringNotContainsString( 'mode=', $result, "No mode parameter should be present for invalid value" );
+		}
+	}
+
+	/**
+	 * Test the process_dc_shortcode method without mode parameter.
+	 *
+	 * Ensures that when no mode is specified, no mode parameter is added to the URL.
+	 */
+	public function test_process_dc_shortcode_without_mode() {
+		$atts = array(
+			'url' => 'https://www.documentcloud.org/documents/24475232-2024-03-08-rcfp-letter-to-nj-leg-re-sb-2930',
+		);
+
+		$result = $this->dc->process_dc_shortcode( $atts );
+
+		// Assert that no mode parameter is present.
+		$this->assertStringNotContainsString( 'mode=', $result, "No mode parameter should be present when not specified" );
+	}
 }

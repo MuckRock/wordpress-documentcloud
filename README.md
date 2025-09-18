@@ -45,6 +45,12 @@ To embed a note, use any note-specific URL. Notes ignore `width/height` and alwa
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html#document/p1/a53674"]
 
+To control which view is displayed by default, use the `mode` parameter:
+
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="notes"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="text"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="grid"]
+
 Here's the full list of embed options you can pass via shortcode attributes; some are specific to the type of resource you're embedding.
 
 
@@ -65,6 +71,7 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `pdf` (boolean): Hide or show link to download original PDF.
 - `text` (boolean): Hide or show text tab.
 - `zoom` (boolean): Hide or show zoom slider.
+- `mode` (string): Display mode for the document viewer. Valid values: `document`, `notes`, `text`, `grid`. Controls which view is shown by default.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
 Or as a Gutenberg Block :
@@ -173,6 +180,7 @@ To create a new release:
 * Removes the `responsive` and `responsive_offset` options.
     All embeds are rendered responsively, so this option is now deprecated.
     The `height` and `width` of the embed can still be limited with their respective options, but the embeds will respond to the size of their container.
+* Add `mode` parameter to control document viewer display mode. Valid values: `document`, `notes`, `text`, `grid`.
 
 ### 0.6.0
 * Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.

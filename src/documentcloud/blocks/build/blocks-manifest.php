@@ -49,6 +49,10 @@ return array(
 				'type' => 'boolean',
 				'default' => null
 			),
+			'mode' => array(
+				'type' => 'string',
+				'default' => 'document'
+			),
 			'embeddedHtml' => array(
 				'type' => 'string',
 				'default' => ''

@@ -187,6 +187,7 @@ class WP_DocumentCloud {
 			'onlyshoworg'       => 0,
 			'title'             => null,
 			'fullscreen'        => 1,
+			'mode'              => null,
 			// The following defaults match the existing plugin, except
 			// `height/width` are prefixed `max*` per the oEmbed spec.
 			// You can still use `height/width` for backwards
@@ -201,6 +202,22 @@ class WP_DocumentCloud {
 			'format'            => 'normal',
 			'style'             => null,
 		);
+	}
+
+	/**
+	 * Validate mode parameter value.
+	 *
+	 * @param string $mode The mode value to validate.
+	 * @return string|null The valid mode value or null if invalid.
+	 */
+	public function validate_mode( $mode ) {
+		$valid_modes = array( 'document', 'notes', 'text', 'grid' );
+
+		if ( in_array( $mode, $valid_modes, true ) ) {
+			return $mode;
+		}
+
+		return null;
 	}
 
 	/**
@@ -237,6 +254,16 @@ class WP_DocumentCloud {
 		}
 
 		$atts = wp_parse_args( $args, $default_atts );
+
+		// Validate mode parameter and remove it if invalid.
+		if ( isset( $atts['mode'] ) ) {
+			$validated_mode = $this->validate_mode( $atts['mode'] );
+			if ( null === $validated_mode ) {
+				unset( $atts['mode'] );
+			} else {
+				$atts['mode'] = $validated_mode;
+			}
+		}
 
 		// Some resources (like notes) have multiple possible
 		// user-facing URLs. We recompose them into a single form.
