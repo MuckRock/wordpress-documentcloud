@@ -49,14 +49,11 @@ class WP_DocumentCloud {
 	const   CACHING_ENABLED             = true,
 			DEFAULT_EMBED_FULL_WIDTH    = 940,
 			OEMBED_RESOURCE_DOMAIN      = 'www.documentcloud.org',
-			OEMBED_PROVIDER             = 'https://www.documentcloud.org/api/oembed.{format}',
+			OEMBED_DOMAIN_MATCH         = '#https?://(www\.)?(beta|embed).documentcloud.org/.*#i',
+			OEMBED_PROVIDER             = 'https://api.www.documentcloud.org/api/oembed/',
 			DOCUMENT_PATTERN            = '^(?P<protocol>https?):\/\/(?P<dc_host>.*documentcloud\.org)\/documents\/(?P<document_slug>[0-9]+-[\p{L}\p{N}%-]+)',
 			CONTAINER_TEMPLATE_START    = '<div class="embed-documentcloud">',
-			CONTAINER_TEMPLATE_END      = '</div>',
-			BETA_ID_CUTOFF              = 20000000,
-			BETA_OEMBED_RESOURCE_DOMAIN = 'beta.documentcloud.org',
-			BETA_OEMBED_DOMAIN_MATCH    = '#https?://(www\.)?(beta|embed).documentcloud.org/.*#i',
-			BETA_OEMBED_PROVIDER        = 'https://api.beta.documentcloud.org/api/oembed';
+			CONTAINER_TEMPLATE_END      = '</div>';
 	/**
 	 * Constructor.
 	 */
@@ -138,10 +135,10 @@ class WP_DocumentCloud {
 		wp_oembed_add_provider( 'http://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
 		wp_oembed_add_provider( 'https://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
 
-		// Add oembed provider for the DocumentCloud beta.
+		// Add oembed matching for beta and embed subdomains.
 		wp_oembed_add_provider(
-			self::BETA_OEMBED_DOMAIN_MATCH,
-			self::BETA_OEMBED_PROVIDER,
+			self::OEMBED_DOMAIN_MATCH,
+			$oembed_provider,
 			true
 		);
 	}
@@ -319,15 +316,9 @@ class WP_DocumentCloud {
 		if ( empty( $atts['url'] ) ) {
 			if ( empty( $atts['id'] ) ) {
 				return '';
-				// Determine which URL on the basis of the DocumentCloud ID.
-			} elseif ( intval( $atts['id'] ) >= self::BETA_ID_CUTOFF ) {
-				// Populate beta URL.
-				// TODO: use only one URL after the switch.
-				$url                  = 'https://' . self::BETA_OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
-				$filtered_atts['url'] = $url;
 			} else {
-				// Populate legacy URL.
-				$url                  = 'https://' . self::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
+				// Populate a placeholder URL for oembed
+				$url = 'https://' . self::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
 				$filtered_atts['url'] = $url;
 			}
 		}
@@ -408,7 +399,6 @@ class WP_DocumentCloud {
 			} elseif ( isset( $elements['note_id'] ) ) {
 				$url .= "/annotations/{$elements['note_id']}";
 			}
-			$url .= '.html';
 		}
 		return $url;
 	}
