@@ -65,7 +65,7 @@ jobs:
 
       - name: Install WP test suite
         run: |
-          mysql -u root -proot -h mysql -P 3306 -e "DROP DATABASE IF EXISTS wordpress_test;"
+          mysql --ssl-mode=DISABLED -u root -proot -h mysql -P 3306 -e "DROP DATABASE IF EXISTS wordpress_test;"
           bash ./bin/install-wp-tests.sh wordpress_test root 'root' mysql ${{ matrix.wp-version }}
 
       - name: Run PHPUnit with coverage
