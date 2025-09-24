@@ -17,6 +17,7 @@ describe( 'DocumentCloud Block Edit Component', () => {
 		fullscreen: false,
 		onlyshoworg: false,
 		pdf: false,
+		mode: 'document',
 		style: '',
 		embeddedHtml: '',
 	};
@@ -263,5 +264,29 @@ describe( 'DocumentCloud Block Edit Component', () => {
 			fullscreen: true,
 		} );
 		expect( mockSetAttributes ).toHaveBeenCalledWith( { pdf: true } );
+	} );
+
+	// Test: Mode selector calls setAttributes when changed
+	it( 'calls setAttributes when mode selector is changed', () => {
+		const attributesWithUrl = {
+			...defaultAttributes,
+			url: 'https://www.documentcloud.org/documents/282753-lefler-thesis/',
+		};
+
+		render(
+			<Edit
+				attributes={ attributesWithUrl }
+				setAttributes={ mockSetAttributes }
+			/>
+		);
+
+		// Find the mode selector
+		const modeSelector = screen.getByLabelText( 'Default Viewer Mode' );
+
+		// Change the mode to 'notes'
+		fireEvent.change( modeSelector, { target: { value: 'notes' } } );
+
+		// Check that setAttributes is called with the new mode
+		expect( mockSetAttributes ).toHaveBeenCalledWith( { mode: 'notes' } );
 	} );
 } );

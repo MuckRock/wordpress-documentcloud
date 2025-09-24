@@ -1,6 +1,22 @@
 import { PATTERN_CONFIGS } from './constants';
 
 /**
+ * Validate mode parameter value.
+ *
+ * @param {string} mode The mode value to validate.
+ * @return {string|null} The valid mode value or null if invalid.
+ */
+export function validateMode( mode ) {
+	const validModes = [ 'document', 'notes', 'text', 'grid' ];
+
+	if ( validModes.includes( mode ) ) {
+		return mode;
+	}
+
+	return null;
+}
+
+/**
  * Get the type of DocumentCloud URL.
  *
  * @param {string} url The URL to check
@@ -45,7 +61,7 @@ export function getDocumentCloudUrlType( url ) {
  * @param {boolean} params.onlyshoworg   - Whether to only show organization.
  * @param {boolean} params.pdf           - Whether to show PDF download link.
  * @param {string}  params.style         - Custom CSS style.
- * @param {boolean} params.responsive    - Should it be responsive.
+ * @param {string}  params.mode          - Display mode (document, notes, text, grid).
  * @return {string} The generated embed URL.
  */
 export const getEmbedUrl = ( {
@@ -57,7 +73,7 @@ export const getEmbedUrl = ( {
 	onlyshoworg,
 	pdf,
 	style,
-	responsive = true,
+	mode,
 } ) => {
 	if ( ! ( useDocumentId ? documentId : url ) ) {
 		return '';
@@ -113,6 +129,9 @@ export const getEmbedUrl = ( {
 		fullscreen = true;
 	}
 
+	// Validate mode parameter
+	const validatedMode = validateMode( mode );
+
 	// For regular document URLs, add the query parameters
 	const params = {
 		embed: 1,
@@ -121,8 +140,12 @@ export const getEmbedUrl = ( {
 		onlyshoworg: onlyshoworg ? 1 : 0,
 		pdf: pdf ? 1 : 0,
 		style: style || '',
-		responsive: responsive ? 1 : 0,
 	};
+
+	// Add mode parameter only if it's valid
+	if ( validatedMode ) {
+		params.mode = validatedMode;
+	}
 
 	const queryString = Object.entries( params )
 		.filter( ( [ , value ] ) => value !== '' )

@@ -33,7 +33,7 @@ jobs:
         env:
           MYSQL_DATABASE: wordpress_test
           MYSQL_ROOT_PASSWORD: root
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 
 
     steps:
       - uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
 
       - name: Install WP test suite
         run: |
-          mysql -u root -proot -h mysql -P 3306 -e "DROP DATABASE IF EXISTS wordpress_test;"
+          mysql --skip-ssl -u root -proot -h mysql -P 3306 -e "DROP DATABASE IF EXISTS wordpress_test;"
           bash ./bin/install-wp-tests.sh wordpress_test root 'root' mysql ${{ matrix.wp-version }}
 
       - name: Run PHPUnit with coverage

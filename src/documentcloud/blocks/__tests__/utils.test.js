@@ -4,6 +4,7 @@ import {
 	getOEmbedApiUrl,
 	parseDocumentCloudUrl,
 	cleanDocumentCloudUrl,
+	validateMode,
 } from '../src/documentcloud/utils/utils';
 
 describe( 'DocumentCloud Utils', () => {
@@ -59,10 +60,10 @@ describe( 'DocumentCloud Utils', () => {
 				onlyshoworg: false,
 				pdf: true,
 				style: 'custom-style',
-				responsive: true,
+				responsive: true, // Check that we ignore the responsive option
 			};
 			expect( getEmbedUrl( params ) ).toBe(
-				'https://www.documentcloud.org/documents/123?embed=1&title=1&fullscreen=0&onlyshoworg=0&pdf=1&style=custom-style&responsive=1'
+				'https://www.documentcloud.org/documents/123?embed=1&title=1&fullscreen=0&onlyshoworg=0&pdf=1&style=custom-style'
 			);
 		} );
 
@@ -76,11 +77,62 @@ describe( 'DocumentCloud Utils', () => {
 				onlyshoworg: true,
 				pdf: false,
 				style: 'border: 1px solid #000;',
-				responsive: false,
+				responsive: false, // Check that we ignore the responsive option
 			};
 			expect( getEmbedUrl( params ) ).toBe(
-				'https://embed.documentcloud.org/documents/24479621-24-03-13-epic-motion-to-enforce-injunction?embed=1&title=0&fullscreen=1&onlyshoworg=1&pdf=0&style=border%3A%201px%20solid%20%23000%3B&responsive=0'
+				'https://embed.documentcloud.org/documents/24479621-24-03-13-epic-motion-to-enforce-injunction?embed=1&title=0&fullscreen=1&onlyshoworg=1&pdf=0&style=border%3A%201px%20solid%20%23000%3B'
 			);
+		} );
+
+		it( 'should include valid mode parameter in embed URL', () => {
+			// Validates that valid mode values are included in the embed URL
+			const validModes = [ 'document', 'notes', 'text', 'grid' ];
+
+			validModes.forEach( ( mode ) => {
+				const params = {
+					useDocumentId: true,
+					documentId: '123',
+					mode: mode,
+				};
+				const result = getEmbedUrl( params );
+				expect( result ).toContain( `mode=${ mode }` );
+			} );
+		} );
+
+		it( 'should exclude invalid mode parameter from embed URL', () => {
+			// Validates that invalid mode values are not included in the embed URL
+			const invalidModes = [
+				'invalid',
+				'foo',
+				'bar',
+				'',
+				null,
+				undefined,
+			];
+
+			invalidModes.forEach( ( mode ) => {
+				const params = {
+					useDocumentId: true,
+					documentId: '123',
+					mode: mode,
+				};
+				const result = getEmbedUrl( params );
+				if ( mode && mode !== '' ) {
+					expect( result ).not.toContain( `mode=${ mode }` );
+				}
+				expect( result ).not.toContain( 'mode=' );
+			} );
+		} );
+
+		it( 'should not include mode parameter when not specified', () => {
+			// Validates that no mode parameter is added when not specified
+			const params = {
+				useDocumentId: true,
+				documentId: '123',
+				title: true,
+			};
+			const result = getEmbedUrl( params );
+			expect( result ).not.toContain( 'mode=' );
 		} );
 	} );
 
@@ -140,6 +192,32 @@ describe( 'DocumentCloud Utils', () => {
 				document_slug: '282753-lefler-thesis',
 				note_id: '53674',
 				page_number: '1',
+			} );
+		} );
+	} );
+
+	// Tests for validateMode
+	describe( 'validateMode', () => {
+		it( 'should return valid mode values', () => {
+			// Tests that valid mode values are returned unchanged
+			const validModes = [ 'document', 'notes', 'text', 'grid' ];
+			validModes.forEach( ( mode ) => {
+				expect( validateMode( mode ) ).toBe( mode );
+			} );
+		} );
+
+		it( 'should return null for invalid mode values', () => {
+			// Tests that invalid mode values return null
+			const invalidModes = [
+				'invalid',
+				'foo',
+				'bar',
+				'',
+				null,
+				undefined,
+			];
+			invalidModes.forEach( ( mode ) => {
+				expect( validateMode( mode ) ).toBeNull();
 			} );
 		} );
 	} );

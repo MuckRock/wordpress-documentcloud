@@ -40,6 +40,31 @@ export const ToggleControl = ( { label, checked, onChange } ) => {
 		</div>
 	);
 };
+export const SelectControl = ( { label, value, options, onChange, help } ) => {
+	const id = label
+		? `select-control-${ label.replace( /\s+/g, '-' ).toLowerCase() }`
+		: 'select-control-undefined';
+	return (
+		<div>
+			{ label && <label htmlFor={ id }>{ label }</label> }
+			<select
+				id={ id }
+				value={ value || '' }
+				onChange={ ( e ) => onChange( e.target.value ) }
+			>
+				{ options &&
+					options.map( ( option ) => (
+						<option key={ option.value } value={ option.value }>
+							{ option.label }
+						</option>
+					) ) }
+			</select>
+			{ help && (
+				<p className="components-base-control__help">{ help }</p>
+			) }
+		</div>
+	);
+};
 export const Placeholder = ( { children, instructions } ) => (
 	<div>
 		{ instructions && <p>{ instructions }</p> }

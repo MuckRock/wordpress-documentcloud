@@ -3,7 +3,7 @@
  * Plugin Name: DocumentCloud
  * Plugin URI: https://www.documentcloud.org/
  * Description: Embed DocumentCloud resources in WordPress content.
- * Version: 0.6.0
+ * Version: 0.7.0
  * Authors: Allan Lasser, Chris Amico, Justin Reese, Dylan Freedman
  * Text Domain: documentcloud
  * License: GPLv2
@@ -49,14 +49,11 @@ class WP_DocumentCloud {
 	const   CACHING_ENABLED             = true,
 			DEFAULT_EMBED_FULL_WIDTH    = 940,
 			OEMBED_RESOURCE_DOMAIN      = 'www.documentcloud.org',
-			OEMBED_PROVIDER             = 'https://www.documentcloud.org/api/oembed.{format}',
+			OEMBED_DOMAIN_MATCH         = '#https?://(www\.)?(beta|embed).documentcloud.org/.*#i',
+			OEMBED_PROVIDER             = 'https://api.www.documentcloud.org/api/oembed/',
 			DOCUMENT_PATTERN            = '^(?P<protocol>https?):\/\/(?P<dc_host>.*documentcloud\.org)\/documents\/(?P<document_slug>[0-9]+-[\p{L}\p{N}%-]+)',
 			CONTAINER_TEMPLATE_START    = '<div class="embed-documentcloud">',
-			CONTAINER_TEMPLATE_END      = '</div>',
-			BETA_ID_CUTOFF              = 20000000,
-			BETA_OEMBED_RESOURCE_DOMAIN = 'beta.documentcloud.org',
-			BETA_OEMBED_DOMAIN_MATCH    = '#https?://(www\.)?(beta|embed).documentcloud.org/.*#i',
-			BETA_OEMBED_PROVIDER        = 'https://api.beta.documentcloud.org/api/oembed';
+			CONTAINER_TEMPLATE_END      = '</div>';
 	/**
 	 * Constructor.
 	 */
@@ -138,10 +135,10 @@ class WP_DocumentCloud {
 		wp_oembed_add_provider( 'http://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
 		wp_oembed_add_provider( 'https://' . $oembed_resource_domain . '/documents/*', $oembed_provider );
 
-		// Add oembed provider for the DocumentCloud beta.
+		// Add oembed matching for beta and embed subdomains.
 		wp_oembed_add_provider(
-			self::BETA_OEMBED_DOMAIN_MATCH,
-			self::BETA_OEMBED_PROVIDER,
+			self::OEMBED_DOMAIN_MATCH,
+			$oembed_provider,
 			true
 		);
 	}
@@ -177,18 +174,17 @@ class WP_DocumentCloud {
 			'url'               => null,
 			'container'         => null,
 			'notes'             => null,
-			'responsive_offset' => null,
 			'page'              => null,
 			'note'              => null,
 			'zoom'              => null,
 			'search'            => null,
-			'responsive'        => null,
 			'sidebar'           => null,
 			'text'              => null,
 			'pdf'               => 0,
 			'onlyshoworg'       => 0,
 			'title'             => null,
 			'fullscreen'        => 1,
+			'mode'              => null,
 			// The following defaults match the existing plugin, except
 			// `height/width` are prefixed `max*` per the oEmbed spec.
 			// You can still use `height/width` for backwards
@@ -203,6 +199,22 @@ class WP_DocumentCloud {
 			'format'            => 'normal',
 			'style'             => null,
 		);
+	}
+
+	/**
+	 * Validate mode parameter value.
+	 *
+	 * @param string $mode The mode value to validate.
+	 * @return string|null The valid mode value or null if invalid.
+	 */
+	public function validate_mode( $mode ) {
+		$valid_modes = array( 'document', 'notes', 'text', 'grid' );
+
+		if ( in_array( $mode, $valid_modes, true ) ) {
+			return $mode;
+		}
+
+		return null;
 	}
 
 	/**
@@ -236,13 +248,19 @@ class WP_DocumentCloud {
 				$args['maxheight'] = $url_args['height'];
 			}
 
-			// If the width is set from url we should set the responsive to false just like how the shortcode works.
-			if ( isset( $url_args['width'] ) && ! array_key_exists( 'responsive', $url_args ) ) {
-				$args['responsive'] = 0;
-			}
 		}
 
 		$atts = wp_parse_args( $args, $default_atts );
+
+		// Validate mode parameter and remove it if invalid.
+		if ( isset( $atts['mode'] ) ) {
+			$validated_mode = $this->validate_mode( $atts['mode'] );
+			if ( null === $validated_mode ) {
+				unset( $atts['mode'] );
+			} else {
+				$atts['mode'] = $validated_mode;
+			}
+		}
 
 		// Some resources (like notes) have multiple possible
 		// user-facing URLs. We recompose them into a single form.
@@ -298,15 +316,9 @@ class WP_DocumentCloud {
 		if ( empty( $atts['url'] ) ) {
 			if ( empty( $atts['id'] ) ) {
 				return '';
-				// Determine which URL on the basis of the DocumentCloud ID.
-			} elseif ( intval( $atts['id'] ) >= self::BETA_ID_CUTOFF ) {
-				// Populate beta URL.
-				// TODO: use only one URL after the switch.
-				$url                  = 'https://' . self::BETA_OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
-				$filtered_atts['url'] = $url;
 			} else {
-				// Populate legacy URL.
-				$url                  = 'https://' . self::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
+				// Populate a placeholder URL for oembed
+				$url = 'https://' . self::OEMBED_RESOURCE_DOMAIN . "/documents/{$atts['id']}.html";
 				$filtered_atts['url'] = $url;
 			}
 		}
@@ -317,15 +329,6 @@ class WP_DocumentCloud {
 		}
 		if ( isset( $atts['width'] ) ) {
 			$filtered_atts['maxwidth'] = $atts['width'];
-		}
-
-		// `responsive` defaults true, but our responsive layout
-		// ignores width declarations. If a user indicates a width and
-		// hasn't otherwise specifically indicated `responsive='true'`,
-		// it's safe to assume they expect us to respect the width, so
-		// we disable the responsive flag.
-		if ( ( isset( $atts['width'] ) || isset( $atts['maxwidth'] ) ) && ( ! array_key_exists( 'responsive', $atts ) || 'true' !== $atts['responsive'] ) ) {
-			$filtered_atts['responsive'] = 'false';
 		}
 
 		// If the format is set to wide, it blows away all other width
@@ -396,7 +399,6 @@ class WP_DocumentCloud {
 			} elseif ( isset( $elements['note_id'] ) ) {
 				$url .= "/annotations/{$elements['note_id']}";
 			}
-			$url .= '.html';
 		}
 		return $url;
 	}
@@ -414,14 +416,10 @@ class WP_DocumentCloud {
 	 * Render the DocumentCloud options page.
 	 */
 	public function render_options_page() {
-		// TODO: remove the responsive warning after the switch.
 		?>
 		<h2><?php esc_html_e( 'DocumentCloud Options', 'documentcloud' ); ?></h2>
 		<p><b><?php esc_html_e( 'Note', 'documentcloud' ); ?></b> - <?php esc_html_e( 'These settings will only work for the ShortCode and Embed Block.', 'documentcloud' ); ?></p>
 		<form action="options.php" method="post">
-
-			<p><?php echo wp_kses_post( __( 'Any widths set here will only take effect on non-beta DocumentCloud embeds if you set <code>responsive="false"</code> on an embed.', 'documentcloud' ) ); ?></p>
-
 			<?php settings_fields( 'documentcloud' ); ?>
 			<?php do_settings_sections( 'documentcloud' ); ?>
 

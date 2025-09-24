@@ -1,5 +1,6 @@
 .svn
 .DS_Store
+node_modules
 
 # WordPress Dev Environment
 src/wordpress
@@ -10,3 +11,6 @@ dist
 
 # Testing
 .phpunit.cache
+
+# Claude Code
+CLAUDE.md

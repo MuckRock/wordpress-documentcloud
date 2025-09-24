@@ -3,7 +3,7 @@ Contributors: chrisamico, reefdog, freedmand
 Tags: documentcloud, documents, journalism, reporting, research
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 0.6.0
+Stable tag: 0.7.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,12 @@ To embed a note, use any note-specific URL. Notes ignore `width/height` and alwa
 
     [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html#document/p1/a53674"]
 
+To control which view is displayed by default, use the `mode` parameter:
+
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="notes"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="text"]
+    [documentcloud url="https://www.documentcloud.org/documents/282753-lefler-thesis.html" mode="grid"]
+
 Here's the full list of embed options you can pass via shortcode attributes; some are specific to the type of resource you're embedding.
 
 **All resources:**
@@ -52,10 +58,8 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 
 **Documents only:**
 
-- `height` (integer): Height (in pixels) of the embed.
-- `width` (integer): Width (in pixels) of the embed. If used, will implicitly set `responsive="false"`.
-- `responsive` (boolean): Use responsive layout, which dynamically adjusts width to fill content area. Defaults `true`.
-- `responsive_offset` (integer): Distance (in pixels) to vertically offset the viewer for some responsive embeds.
+- `height` (integer): Maximum height (in pixels) of the embed.
+- `width` (integer): Maximum width (in pixels) of the embed.
 - `page` (integer): Page number to have the document scroll to by default.
 - `note` (integer): ID of the note that the document should highlight by default.
 - `notes` (boolean): Hide or show notes.
@@ -64,6 +68,7 @@ Here's the full list of embed options you can pass via shortcode attributes; som
 - `pdf` (boolean): Hide or show link to download original PDF.
 - `text` (boolean): Hide or show text tab.
 - `zoom` (boolean): Hide or show zoom slider.
+- `mode` (string): Display mode for the document viewer. Valid values: `document`, `notes`, `text`, `grid`. Controls which view is shown by default.
 - `format` (string): Indicate to the theme that this is a wide asset by setting this to `wide`. Defaults `normal`.
 
 Or as a Gutenberg Block:
@@ -95,6 +100,12 @@ You can read more about publishing and embedding DocumentCloud resources on http
 **Upgrading from Navis DocumentCloud:** If you're currently using the Navis DocumentCloud plugin (from which this plugin was built), you'll want to deactivate or delete it before installing this plugin.
 
 == Changelog ==
+
+= 0.7.0 =
+* Removes the `responsive` URL parameter option.
+    All embeds are rendered responsively, so this option is now deprecated.
+    The height and width of the embed can still be controlled with their respective options.
+* Add `mode` parameter to control document viewer display mode. Valid values: `document`, `notes`, `text`, `grid`.
 
 = 0.6.0 =
 * Add Gutenberg block for embedding DocumentCloud documents resonating a functionality similar to the shortcode.

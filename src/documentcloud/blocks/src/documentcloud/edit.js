@@ -8,6 +8,7 @@ import {
 	PanelRow,
 	TextControl,
 	ToggleControl,
+	SelectControl,
 	Placeholder,
 	Button,
 	Notice,
@@ -66,6 +67,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		fullscreen,
 		onlyshoworg,
 		pdf,
+		mode,
 		embeddedHtml,
 	} = attributes;
 
@@ -272,15 +274,10 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	/**
 	 * Generates the embed URL based on current attributes and settings.
-	 * Determines if responsive layout should be used based on dimensions.
 	 *
 	 * This function is used for both preview and API fetching.
 	 */
 	const generateEmbedUrl = useCallback( () => {
-		const responsive =
-			String( tempDimensions.width ).length === 0 &&
-			String( tempDimensions.height ).length === 0;
-
 		return getEmbedUrl( {
 			useDocumentId,
 			documentId,
@@ -289,9 +286,9 @@ export default function Edit( { attributes, setAttributes } ) {
 			fullscreen,
 			onlyshoworg,
 			pdf,
+			mode,
 			width: tempDimensions.width,
 			height: tempDimensions.height,
-			responsive,
 		} );
 	}, [
 		useDocumentId,
@@ -301,6 +298,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		fullscreen,
 		onlyshoworg,
 		pdf,
+		mode,
 		tempDimensions,
 	] );
 
@@ -496,6 +494,47 @@ export default function Edit( { attributes, setAttributes } ) {
 						title={ __( 'Display Options', 'documentcloud' ) }
 						initialOpen={ true }
 					>
+						{ /* Mode Selector */ }
+						<PanelRow>
+							<SelectControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={ __(
+									'Default Viewer Mode',
+									'documentcloud'
+								) }
+								value={ mode }
+								options={ [
+									{
+										label: __(
+											'Document',
+											'documentcloud'
+										),
+										value: 'document',
+									},
+									{
+										label: __( 'Notes', 'documentcloud' ),
+										value: 'notes',
+									},
+									{
+										label: __( 'Text', 'documentcloud' ),
+										value: 'text',
+									},
+									{
+										label: __( 'Grid', 'documentcloud' ),
+										value: 'grid',
+									},
+								] }
+								onChange={ ( value ) =>
+									setAttributes( { mode: value } )
+								}
+								help={ __(
+									'Select which view to show by default.',
+									'documentcloud'
+								) }
+							/>
+						</PanelRow>
+
 						{ /* Title Toggle */ }
 						<PanelRow>
 							<ToggleControl
