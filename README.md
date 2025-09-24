@@ -111,25 +111,40 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Development
 
-Plugin files are located in `src/documentcloud`
+Plugin files are located in `src/documentcloud` and WordPress core files in `src/wordpress`.
 
-Docker is used to spin up a development and testing WordPress environment.
+Docker is used to spin up a development WordPress environment using a **build-based approach**. Files are copied into the container during build time, providing complete isolation between local development and the running container.
 
 Unit tests are setup using PHPUnit and Jest, please refer to [Testing Setup ](./TESTING.md) for the setup steps
 
 ### Install
 
 ```sh
-# Start services
-docker compose up
-
-# Fix permissions
-docker compose exec wordpress chown -R www-data:www-data /var/www/html
+# Build and start services
+docker compose build wordpress
+docker compose up -d
 ```
 
 1. Go to [`localhost:8000`](http://localhost:8000)
 2. Create an account. Save the username and password, then log in.
 3. Go to the Plugins section, then activate the "DocumentCloud" plugin.
+
+### Making Changes During Development
+
+**Important:** This setup uses a build-based approach instead of volume mounts. When you make changes to any files in `src/documentcloud/` or `src/wordpress/`, you need to rebuild the container:
+
+```sh
+# After making changes to plugin files
+docker compose down
+docker compose build wordpress
+docker compose up -d
+```
+
+### File Structure
+- `src/documentcloud/` - DocumentCloud plugin source files
+- `src/wordpress/` - WordPress core files (copied to container during build)
+- `Dockerfile.wordpress` - Multi-stage build that compiles blocks and copies all files
+- `docker-compose.yml` - No volume mounts, uses custom built image
 
 ### Test
 
