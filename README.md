@@ -131,10 +131,35 @@ docker compose up -d
 
 ### Making Changes During Development
 
-**Important:** This setup uses a build-based approach instead of volume mounts. When you make changes to any files in `src/documentcloud/` or `src/wordpress/`, you need to rebuild the container:
+**Important:** This setup uses a build-based approach instead of volume mounts for complete isolation and reproducible builds.
+
+#### Fast Development Workflow (Recommended)
+
+Use Docker Compose's built-in watch mode for automatic file syncing:
 
 ```sh
-# After making changes to plugin files
+# Start services with watch mode enabled
+docker compose watch
+
+# Or run in background
+docker compose up -d && docker compose watch
+```
+
+- **PHP files** are synced instantly to the container (no rebuild needed)
+- **JavaScript/Block changes** trigger an automatic rebuild with the new assets
+
+The watch configuration automatically:
+- Syncs plugin PHP files and assets in real-time
+- Rebuilds when `blocks/src/` or `package.json` changes
+- Ignores changes to `node_modules/` and build artifacts
+- Handles file permissions correctly
+
+#### Full Container Rebuild
+
+For major changes or when syncing isn't sufficient, rebuild the container:
+
+```sh
+# Rebuild and restart
 docker compose down
 docker compose build wordpress
 docker compose up -d
