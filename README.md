@@ -111,25 +111,65 @@ If you find yourself absolutely needing to expire the cache, though, you have tw
 
 ## Development
 
-Plugin files are located in `src/documentcloud`
+Plugin files are located in `src/documentcloud` and WordPress core files in `src/wordpress`.
 
-Docker is used to spin up a development and testing WordPress environment.
+Docker is used to spin up a development WordPress environment using a **build-based approach**. Files are copied into the container during build time, providing complete isolation between local development and the running container.
 
 Unit tests are setup using PHPUnit and Jest, please refer to [Testing Setup ](./TESTING.md) for the setup steps
 
 ### Install
 
 ```sh
-# Start services
-docker compose up
-
-# Fix permissions
-docker compose exec wordpress chown -R www-data:www-data /var/www/html
+# Build and start services
+docker compose build wordpress
+docker compose up -d
 ```
 
 1. Go to [`localhost:8000`](http://localhost:8000)
 2. Create an account. Save the username and password, then log in.
 3. Go to the Plugins section, then activate the "DocumentCloud" plugin.
+
+### Making Changes During Development
+
+**Important:** This setup uses a build-based approach instead of volume mounts for complete isolation and reproducible builds.
+
+#### Fast Development Workflow (Recommended)
+
+Use Docker Compose's built-in watch mode for automatic file syncing:
+
+```sh
+# Start services with watch mode enabled
+docker compose watch
+
+# Or run in background
+docker compose up -d && docker compose watch
+```
+
+- **PHP files** are synced instantly to the container (no rebuild needed)
+- **JavaScript/Block changes** trigger an automatic rebuild with the new assets
+
+The watch configuration automatically:
+- Syncs plugin PHP files and assets in real-time
+- Rebuilds when `blocks/src/` or `package.json` changes
+- Ignores changes to `node_modules/` and build artifacts
+- Handles file permissions correctly
+
+#### Full Container Rebuild
+
+For major changes or when syncing isn't sufficient, rebuild the container:
+
+```sh
+# Rebuild and restart
+docker compose down
+docker compose build wordpress
+docker compose up -d
+```
+
+### File Structure
+- `src/documentcloud/` - DocumentCloud plugin source files
+- `src/wordpress/` - WordPress core files (copied to container during build)
+- `Dockerfile.wordpress` - Multi-stage build that compiles blocks and copies all files
+- `docker-compose.yml` - No volume mounts, uses custom built image
 
 ### Test
 

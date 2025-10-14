@@ -1,7 +1,9 @@
 services:
   wordpress:
     restart: always
-    image: wordpress:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.wordpress
     container_name: wordpress
     ports:
       - "8000:80"
@@ -11,10 +13,24 @@ services:
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_TABLE_PREFIX: wp_
-    volumes:
-      - ./src/wordpress:/var/www/html
-      - ./src/documentcloud:/var/www/html/wp-content/plugins/documentcloud
-
+    develop:
+      watch:
+        # Sync plugin PHP files and assets (excluding blocks source)
+        - action: sync
+          path: ./src/documentcloud
+          target: /var/www/html/wp-content/plugins/documentcloud
+          ignore:
+            - blocks/node_modules/
+            - blocks/src/
+            - blocks/package.json
+            - blocks/package-lock.json
+        # Rebuild when JavaScript source or dependencies change
+        - action: rebuild
+          path: ./src/documentcloud/blocks/src
+        - action: rebuild
+          path: ./src/documentcloud/blocks/package.json
+        - action: rebuild
+          path: ./src/documentcloud/blocks/package-lock.json
     depends_on:
       - db
     networks:

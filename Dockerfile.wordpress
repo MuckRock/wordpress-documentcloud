@@ -1,0 +1,28 @@
+FROM node:18 as builder
+
+# Build the Gutenberg blocks
+WORKDIR /app
+COPY src/documentcloud/blocks/package*.json ./
+RUN npm ci --legacy-peer-deps
+
+# Copy the entire documentcloud directory to get proper paths
+COPY src/documentcloud ./
+# Set working directory to blocks for the build
+WORKDIR /app/blocks
+RUN npm run build
+
+FROM wordpress:latest
+
+# Copy WordPress files (to override default ones if needed)
+COPY src/wordpress /var/www/html/
+
+# Copy DocumentCloud plugin files
+COPY src/documentcloud /var/www/html/wp-content/plugins/documentcloud/
+
+# Copy built assets from builder stage
+COPY --from=builder /app/blocks/build /var/www/html/wp-content/plugins/documentcloud/blocks/build/
+
+# Set proper ownership and permissions
+RUN chown -R www-data:www-data /var/www/html/ && \
+    find /var/www/html/wp-content/plugins/documentcloud/ -type d -exec chmod 755 {} \; && \
+    find /var/www/html/wp-content/plugins/documentcloud/ -type f -exec chmod 644 {} \;
